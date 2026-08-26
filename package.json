@@ -1,0 +1,22 @@
+{
+  "name": "dsh-balance-pill",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness web plugin: a small DeepSeek balance pill in the session header. The Host half resolves DEEPSEEK_API_KEY via the credentials service and fetches https://api.deepseek.com/user/balance; the browser half renders the pill and only ever receives { ok, balance, currency }.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": []
+    }
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.17"
+  }
+}
