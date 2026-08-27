@@ -3,6 +3,16 @@
 DeepSeek Harness web plugin: a small, always-visible DeepSeek balance pill in
 the session header (e.g. `CNY 42.17`). No dashboard, charts, or settings UI.
 
+## Screenshots
+
+Balance pill in the session header (green = off-peak):
+
+![Balance pill in the session header](docs/balance-pill.png)
+
+Peak-hours settings under **Settings → Plugins → Plugin configuration**:
+
+![Balance pill peak hours settings](docs/peak-hours-settings.png)
+
 ## Layout
 
 ```
@@ -11,6 +21,7 @@ dsh-balance-pill/
   cordis.patch.yml   bundle layer: inserts the Host row into the profile
   lib/index.js       Host half: credentials resolve + Node fetch + webserver route
   lib/client.js      Browser half: the pill in conversation.session.header.utilities
+  docs/              README screenshots
 ```
 
 ## How it works
