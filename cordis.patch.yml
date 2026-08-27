@@ -1,0 +1,12 @@
+# dsh-balance-pill bundle patch
+#
+# Applied when a profile lists this package in `dsh.profile.bundles`
+# (e.g. after `dsh plugin --profile web add github:ivbrajkovic/dsh-balance-pill`).
+# Inserts the Host half; the browser half is picked up via `dsh.client`.
+#
+# If the profile already mounts this package manually in its own
+# cordis.patch.yml, remove that row to avoid double-mounting.
+
+- insert:
+    - id: balance-pill
+      name: dsh-balance-pill
