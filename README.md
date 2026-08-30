@@ -1,13 +1,15 @@
 # dsh-balance-pill
 
-DeepSeek Harness web plugin: a small, always-visible DeepSeek balance pill in
-the session header (e.g. `CNY 42.17`). No dashboard, charts, or settings UI.
+DeepSeek Harness web plugin: a small, always-visible DeepSeek balance pill
+(e.g. `CNY 42.17`). With a chat session open it sits in the session header;
+without one it pins to the top-right corner of the app, so it is always on
+screen. No dashboard, charts, or settings UI.
 
 ## Screenshots
 
-Balance pill in the session header (green = off-peak):
+Balance pill visible with and without a chat session (green = off-peak):
 
-![Balance pill in the session header](docs/balance-pill.png)
+![Balance pill in the top-right corner](docs/balance-pill.png)
 
 Peak-hours settings under **Settings → Plugins → Plugin configuration**:
 
@@ -20,7 +22,7 @@ dsh-balance-pill/
   package.json       dual-face metadata (dsh.bundle + dsh.client), zero deps, no scripts
   cordis.patch.yml   bundle layer: inserts the Host row into the profile
   lib/index.js       Host half: credentials resolve + Node fetch + webserver route
-  lib/client.js      Browser half: the pill in conversation.session.header.utilities
+  lib/client.js      Browser half: the pill in the header + shell.overlay fallback
   docs/              README screenshots
 ```
 
@@ -35,8 +37,14 @@ dsh-balance-pill/
   `GET https://api.deepseek.com/user/balance` with Node's built-in `fetch`
   (Authorization: Bearer), and returns the minimum payload the UI needs:
   `{ "ok": true, "balance": 42.17, "currency": "CNY" }` or `{ "ok": false }`.
-- The browser half registers a `BalancePill` React component into the
-  additive `conversation.session.header.utilities` slot (id `balance-pill`).
+- The browser half registers the `BalancePill` React component (id
+  `balance-pill`) twice. Inside a chat session it contributes to the
+  `conversation.session.header.utilities` seat, so it rides the session
+  header's flex row without ever covering the header's own controls. It also
+  contributes to the frame-wide `shell.overlay` seat — an always-visible,
+  additive layer — pinned to the top-right corner, but renders there **only
+  while no session header exists** (no current session, or a still-blank
+  one), so the pill is always on screen without duplicating or overlapping.
   It fetches the same-origin route on mount, every 60 seconds, and on click.
   Loaded state shows `CNY 42.17`; loading shows `…`; any failure shows a muted
   `–` — one neutral error state, no details.
@@ -128,8 +136,10 @@ so the bundle layer is the only mount (avoids double-loading).
 ## Verify
 
 1. Start or restart the web profile (`dsh web` / `pnpm dlx @deepseek-ai/dsh web`).
-2. Open `http://localhost:3080` — the header should show the balance pill
-   (e.g. `CNY 42.17`, or `–` if the key is missing).
+2. Open `http://localhost:3080` — the pill is always visible: pinned to the
+   top-right corner while no session is open (e.g. `CNY 42.17`, or `–` if the
+   key is missing), and inside the session header once a chat session is
+   open, without covering any header controls.
 3. Open **Settings → Plugins → Plugin configuration**, expand **Balance pill
    peak hours**, set timezone and ranges, **Save** — the pill retints on the
    next check (within 60s).
