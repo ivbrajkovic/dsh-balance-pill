@@ -38,14 +38,18 @@ dsh-balance-pill/
   (Authorization: Bearer), and returns the minimum payload the UI needs:
   `{ "ok": true, "balance": 42.17, "currency": "CNY" }` or `{ "ok": false }`.
 - The browser half registers the `BalancePill` React component (id
-  `balance-pill`) twice. Inside a chat session it contributes to the
+  `balance-pill`) into two seats, as thin views over one shared balance
+  store. Inside a chat session it contributes to the
   `conversation.session.header.utilities` seat, so it rides the session
   header's flex row without ever covering the header's own controls. It also
   contributes to the frame-wide `shell.overlay` seat — an always-visible,
   additive layer — pinned to the top-right corner, but renders there **only
-  while no session header exists** (no current session, or a still-blank
-  one), so the pill is always on screen without duplicating or overlapping.
-  It fetches the same-origin route on mount, every 60 seconds, and on click.
+  while the header is not showing its own pill** (no session open in the main
+  view, or a still-blank one), so the pill is always on screen without
+  duplicating or overlapping. The shared store owns the single poll of the
+  same-origin route — first fetch on the first mounted view, then every 60
+  seconds, plus on click — so the API is polled once per minute no matter
+  which seat is mounted, and seat switches never trigger extra requests.
   Loaded state shows `CNY 42.17`; loading shows `…`; any failure shows a muted
   `–` — one neutral error state, no details.
 - The Host half also registers one settings namespace, `dsh-balance-pill`
